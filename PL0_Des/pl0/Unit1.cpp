@@ -699,7 +699,7 @@ void STATEMENT(SYMSET FSYS,int LEV,int &TX) {   /*STATEMENT*/
 		
 	// ↓↓↓ 新增部分 ↓↓↓
 // 扩充语句。FOR <变量>:=<表达式>STEP<表达式>UNTIL<表达式>Do<语句> ；
-    case FORSYM:
+/*    case FORSYM:
         GetSym();
         Form1->printfs("保留字：FORSYM ");
         break;
@@ -730,8 +730,8 @@ void STATEMENT(SYMSET FSYS,int LEV,int &TX) {   /*STATEMENT*/
     case DECSYM:
         GetSym();
         Form1->printfs("运算符：-- ");//--
-        break;
-/*case FORSYM:
+        break;*/
+case FORSYM:
     GetSym();
     if(SYM!=IDENT) Error(47);
     else i=POSITION(ID,TX);
@@ -751,11 +751,11 @@ void STATEMENT(SYMSET FSYS,int LEV,int &TX) {   /*STATEMENT*/
     GEN(JMP,0,0);
     CX3=CX;
     
-    EXPRESSION(SymSetUnion(SymSetNew(UNTILSYM),FSYS),LEV,TX);
+    EXPRESSION(SymSetUnion(SymSetNew(TOSYM),FSYS),LEV,TX);
     GEN(LOD,LEV-TABLE[i].vp.LEVEL,TABLE[i].vp.ADR);
     GEN(OPR,0,2);
     GEN(STO,LEV-TABLE[i].vp.LEVEL,TABLE[i].vp.ADR);
-    if(SYM==UNTILSYM) GetSym();
+    if(SYM==TOSYM) GetSym();
     else Error(47);
     CODE[CX1].A=CX;
     
@@ -807,7 +807,7 @@ case DECSYM:
         GetSym();
     }
     else Error(45);
-    break;*/
+    break;
 // ↑↑↑ 新增部分 ↑↑↑
   }
   TEST(FSYS,SymSetNULL(),19);
