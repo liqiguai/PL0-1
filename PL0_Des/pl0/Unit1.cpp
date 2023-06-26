@@ -9,14 +9,14 @@
 TForm1 *Form1;
 //---------------------------------------------------------------------------
 const  AL    =  10;  /* LENGTH OF IDENTIFIERS */
-const  NORW  =  19;  /* # OF RESERVED WORDS */
+const  NORW  =  21;  /* # OF RESERVED WORDS *///19
 const  TXMAX = 100;  /* LENGTH OF IDENTIFIER TABLE */
 const  NMAX  =  14;  /* MAX NUMBER OF DEGITS IN NUMBERS */
 const  AMAX  =2047;  /* MAXIMUM ADDRESS */
 const  LEVMAX=   3;  /* MAX DEPTH OF BLOCK NESTING */
 const  CXMAX = 200;  /* SIZE OF CODE ARRAY */
 
-const int SYMNUM = 47; //保留字个数
+const int SYMNUM = 49; //保留字个数47
 
 typedef enum  { NUL, IDENT, NUMBER, PLUS, MINUS, TIMES,
 	            SLASH, ODDSYM, EQL, NEQ, LSS, LEQ, GTR, GEQ,
@@ -25,8 +25,8 @@ typedef enum  { NUL, IDENT, NUMBER, PLUS, MINUS, TIMES,
 	            WHILESYM, WRITESYM, READSYM, DOSYM, CALLSYM,
 	            CONSTSYM, VARSYM, PROCSYM, PROGSYM			
 				
-				// ↓↓↓ 新增部分 ↓↓↓
-                , ELSESYM, FORSYM, STEPSYM, UNTILSYM, RETURNSYM,	// 共5个。ELSE，FOR，STEP，UNTIL，RETURN
+				// ↓↓↓ 新增部分 ↓↓↓TO，DOWNTO
+                , ELSESYM, FORSYM, STEPSYM, UNTILSYM, RETURNSYM, TOSYM, DOWNTOSYM,	// 共5个。ELSE，FOR，STEP，UNTIL，RETURN
                 TIMESBECOMES, SLASHBECOMES, ANDSYM, ORSYM, NOTSYM	// 共5个。*=，/=，&，||，！
                 , PLUSBECOMES, MINUSBECOMES, INCSYM, DECSYM         // 共4个。+=，-+，++，--
                 // ↑↑↑ 新增部分 ↑↑↑
@@ -39,7 +39,7 @@ char *SYMOUT[] = {"NUL", "IDENT", "NUMBER", "PLUS", "MINUS", "TIMES",
 	    "CONSTSYM", "VARSYM", "PROCSYM", "PROGSYM" 
 		
 		// ↓↓↓ 新增部分 ↓↓↓
-        , "ELSESYM", "FORSYM", "STEPSYM", "UNTILSYM", "RETURNSYM",	// 共5个。ELSE，FOR，STEP，UNTIL，RETURN
+        , "ELSESYM", "FORSYM", "STEPSYM", "UNTILSYM", "RETURNSYM", "TOSYM", "DOWNTOSYM",	// 共5个。ELSE，FOR，STEP，UNTIL，RETURN
         "TIMESBECOMES", "SLASHBECOMES", "ANDSYM", "ORSYM", "NOTSYM"	// 共5个。*=，/=，&，||，！
         , "PLUSBECOMES", "MINUSBECOMES", "INCSYM", "DECSYM"         // 共4个。+=，-+，++，--
         // ↑↑↑ 新增部分 ↑↑↑	
@@ -699,7 +699,39 @@ void STATEMENT(SYMSET FSYS,int LEV,int &TX) {   /*STATEMENT*/
 		
 	// ↓↓↓ 新增部分 ↓↓↓
 // 扩充语句。FOR <变量>:=<表达式>STEP<表达式>UNTIL<表达式>Do<语句> ；
-case FORSYM:
+    case FORSYM:
+        GetSym();
+        Form1->printfs("保留字：FORSYM ");
+        break;
+    case TOSYM:
+        GetSym();
+        Form1->printfs("保留字：TOSYM ");
+        break;
+    case DOWNTOSYM:
+        GetSym();
+        Form1->printfs("保留字：DOWNTOSYM ");
+        break;
+    case RETURNSYM:
+        GetSym();
+        Form1->printfs("保留字：RETURNSYM ");
+        break;
+    case PLUSBECOMES:
+        GetSym();
+        Form1->printfs("运算符：+= ");//+=
+        break;
+    case MINUSBECOMES:
+        GetSym();
+        Form1->printfs("运算符：-= ");//-=
+        break;
+    case INCSYM:
+        GetSym();
+        Form1->printfs("运算符：++ ");//++
+        break;
+    case DECSYM:
+        GetSym();
+        Form1->printfs("运算符：-- ");//--
+        break;
+/*case FORSYM:
     GetSym();
     if(SYM!=IDENT) Error(47);
     else i=POSITION(ID,TX);
@@ -738,7 +770,7 @@ case FORSYM:
     STATEMENT(FSYS,LEV,TX);
     GEN(JMP,0,CX3);
     CODE[CX2].A=CX;
-    break;
+    break;*/
 	
 	// 处理 ++i
 case INCSYM:   
@@ -917,47 +949,51 @@ void __fastcall TForm1::ButtonRunClick(TObject *Sender) {
   strcpy(MNEMONIC[CAL],"CAL");   strcpy(MNEMONIC[INI],"INI");
   strcpy(MNEMONIC[JMP],"JMP");   strcpy(MNEMONIC[JPC],"JPC");
   
-  // 新增5个保留字。ELSE, FOR, STEP, UNTIL, RETURN
+  // 新增5个保留字。ELSE, FOR, STEP, UNTIL, RETURN, TO, DOWNTO,
   strcpy(KWORD[ 1],"BEGIN");
   strcpy(KWORD[ 2],"CALL");
   strcpy(KWORD[ 3],"CONST");
   strcpy(KWORD[ 4],"DO");
-  strcpy(KWORD[ 5],"ELSE");     // 增加保留字1。 ELSE
-  strcpy(KWORD[ 6],"END");
-  strcpy(KWORD[ 7],"FOR");      // 增加保留字2。 FOR
-  strcpy(KWORD[ 8],"IF");
-  strcpy(KWORD[ 9],"ODD");
-  strcpy(KWORD[10],"PROCEDURE");
-  strcpy(KWORD[11],"PROGRAM");
-  strcpy(KWORD[12],"READ");
-  strcpy(KWORD[13],"RETURN");   // 增加保留字5。 RETURN
-  strcpy(KWORD[14],"STEP");		// 增加保留字3。 STEP
-  strcpy(KWORD[15],"THEN");
-  strcpy(KWORD[16],"UNTIL");	// 增加保留字4。 UNTIL
-  strcpy(KWORD[17],"VAR");
-  strcpy(KWORD[18],"WHILE");
-  strcpy(KWORD[19],"WRITE");
+  strcpy(KWORD[ 5],"DOWNTO");   //
+  strcpy(KWORD[ 6],"ELSE");     // 增加保留字1。 ELSE
+  strcpy(KWORD[ 7],"END");
+  strcpy(KWORD[ 8],"FOR");      // 增加保留字2。 FOR
+  strcpy(KWORD[ 9],"IF");
+  strcpy(KWORD[10],"ODD");
+  strcpy(KWORD[11],"PROCEDURE");
+  strcpy(KWORD[12],"PROGRAM");
+  strcpy(KWORD[13],"READ");
+  strcpy(KWORD[14],"RETURN");   // 增加保留字5。 RETURN
+  strcpy(KWORD[15],"STEP");		// 增加保留字3。 STEP
+  strcpy(KWORD[16],"THEN");
+  strcpy(KWORD[17],"TO");       //
+  strcpy(KWORD[18],"UNTIL");	// 增加保留字4。 UNTIL
+  strcpy(KWORD[19],"VAR");
+  strcpy(KWORD[20],"WHILE");
+  strcpy(KWORD[21],"WRITE");
   
-  // 新增5个保留字符号。ELSESYM, FORSYM, STEPSYM, UNTILSYM, RETURNSYM
+  // 新增5个保留字符号。ELSESYM, FORSYM, STEPSYM, UNTILSYM, RETURNSYM, TOSYM, DOWNTOSYM,
   WSYM[ 1]=BEGINSYM;
   WSYM[ 2]=CALLSYM;
   WSYM[ 3]=CONSTSYM;
   WSYM[ 4]=DOSYM;
-  WSYM[ 5]=ELSESYM;		// 增加保留字符号1。 ELSESYM
-  WSYM[ 6]=ENDSYM;
-  WSYM[ 7]=FORSYM;      // 增加保留字符号2。 FORSYM
-  WSYM[ 8]=IFSYM;
-  WSYM[ 9]=ODDSYM;
-  WSYM[10]=PROCSYM;
-  WSYM[11]=PROGSYM;
-  WSYM[12]=READSYM;
-  WSYM[13]=RETURNSYM;   // 增加保留字符号5。 RETURNSYM
-  WSYM[14]=STEPSYM;     // 增加保留字符号3。 STEPSYM
-  WSYM[15]=THENSYM;
-  WSYM[16]=UNTILSYM;    // 增加保留字符号4。 UNTILSYM
-  WSYM[17]=VARSYM;
-  WSYM[18]=WHILESYM;
-  WSYM[19]=WRITESYM;
+  WSYM[ 5]=DOWNTOSYM;   //
+  WSYM[ 6]=ELSESYM;		// 增加保留字符号1。 ELSESYM
+  WSYM[ 7]=ENDSYM;
+  WSYM[ 8]=FORSYM;      // 增加保留字符号2。 FORSYM
+  WSYM[ 9]=IFSYM;
+  WSYM[10]=ODDSYM;
+  WSYM[11]=PROCSYM;
+  WSYM[12]=PROGSYM;
+  WSYM[13]=READSYM;
+  WSYM[14]=RETURNSYM;   // 增加保留字符号5。 RETURNSYM
+  WSYM[15]=STEPSYM;     // 增加保留字符号3。 STEPSYM
+  WSYM[16]=THENSYM;
+  WSYM[17]=TOSYM;       //
+  WSYM[18]=UNTILSYM;    // 增加保留字符号4。 UNTILSYM
+  WSYM[19]=VARSYM;
+  WSYM[20]=WHILESYM;
+  WSYM[21]=WRITESYM;
   
   // 新增2个符号。 & ！
   SSYM['+']=PLUS;      SSYM['-']=MINUS;
