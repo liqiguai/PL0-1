@@ -770,7 +770,7 @@ void STATEMENT(SYMSET FSYS,int LEV,int &TX) {   /*STATEMENT*/
     STATEMENT(FSYS,LEV,TX);
     GEN(JMP,0,CX3);
     CODE[CX2].A=CX;
-    break;*/
+    break;
 	
 	// 处理 ++i
 case INCSYM:   
@@ -807,7 +807,7 @@ case DECSYM:
         GetSym();
     }
     else Error(45);
-    break;
+    break;*/
 // ↑↑↑ 新增部分 ↑↑↑
   }
   TEST(FSYS,SymSetNULL(),19);
